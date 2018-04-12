@@ -1,41 +1,18 @@
-﻿/*
- * Original author: Nicholas Shulman <nicksh .at. u.washington.edu>,
- *                  MacCoss Lab, Department of Genome Sciences, UW
- *
- * Copyright 2018 University of Washington - Seattle, WA
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using pwiz.Skyline.Model.DocSettings;
 using pwiz.Skyline.Model.Results;
 
 namespace pwiz.Skyline.Model.ElementLocators
 {
-    /// <summary>
-    /// An ElementRef for a result (i.e. ChromInfo) in a SkylineDocument.
-    /// </summary>
     public abstract class ResultRef : ElementRef
     {
-        // ReSharper disable NonLocalizedString
         private const string ATTR_FILENAME = "filename";
         private const string ATTR_FILEPATH = "filepath";
-        // Resharper restore NonLocalizedString
 
         protected ResultRef(NodeRef parent) : base(parent)
         {
+            
         }
 
         public int OptimizationStep { get; private set; }
@@ -70,11 +47,6 @@ namespace pwiz.Skyline.Model.ElementLocators
             return true;
         }
 
-        public bool Matches(ChromatogramSet chromatogramSet)
-        {
-            return Name == chromatogramSet.Name;
-        }
-
         public ChromFileInfo FindChromFileInfo(SrmDocument document)
         {
             var measuredResults = document.Settings.MeasuredResults;
@@ -87,11 +59,6 @@ namespace pwiz.Skyline.Model.ElementLocators
             {
                 return null;
             }
-            return FindChromFileInfo(chromatogramSet);
-        }
-
-        public ChromFileInfo FindChromFileInfo(ChromatogramSet chromatogramSet)
-        {
             return chromatogramSet.MSDataFileInfos.FirstOrDefault(info => Matches(info.FilePath));
         }
 
@@ -136,7 +103,6 @@ namespace pwiz.Skyline.Model.ElementLocators
         }
 
     }
-
     public abstract class ResultRef<TDocNode, TChromInfo> : ResultRef
         where TDocNode : DocNode
         where TChromInfo : ChromInfo
@@ -166,17 +132,8 @@ namespace pwiz.Skyline.Model.ElementLocators
         }
 
         protected abstract IEnumerable<Tuple<int, TChromInfo>> EnumerateChromInfos(TDocNode parent);
-        public abstract int GetOptimizationStep(TChromInfo chromInfo);
+        protected abstract int GetOptimizationStep(TChromInfo chromInfo);
 
-        public virtual Annotations GetAnnotations(TChromInfo chromInfo)
-        {
-            return null;
-        }
-
-        public virtual TChromInfo ChangeAnnotations(TChromInfo chromInfo, Annotations newAnnotations)
-        {
-            throw new InvalidOperationException();
-        }
 
         public ResultRef<TDocNode, TChromInfo> ChangeChromInfo(ChromatogramSet chromatogramSet, TChromInfo chromInfo)
         {
@@ -207,9 +164,9 @@ namespace pwiz.Skyline.Model.ElementLocators
 
         }
 
-        public override string ElementType
+        public override string DocKeyType
         {
-            get { return "TransitionResult"; } // Not L10N
+            get { return "TransitionResult"; }
         }
 
         protected override IEnumerable<Tuple<int, TransitionChromInfo>> EnumerateChromInfos(TransitionDocNode parent)
@@ -227,28 +184,9 @@ namespace pwiz.Skyline.Model.ElementLocators
             }
         }
 
-        public override int GetOptimizationStep(TransitionChromInfo chromInfo)
+        protected override int GetOptimizationStep(TransitionChromInfo chromInfo)
         {
             return chromInfo.OptimizationStep;
-        }
-
-        public override Annotations GetAnnotations(TransitionChromInfo chromInfo)
-        {
-            if (chromInfo.OptimizationStep != 0)
-            {
-                return null;
-            }
-            return chromInfo.Annotations;
-        }
-
-        public override AnnotationDef.AnnotationTargetSet AnnotationTargets
-        {
-            get { return AnnotationDef.AnnotationTargetSet.Singleton(AnnotationDef.AnnotationTarget.transition_result); }
-        }
-
-        public override TransitionChromInfo ChangeAnnotations(TransitionChromInfo chromInfo, Annotations newAnnotations)
-        {
-            return chromInfo.ChangeAnnotations(newAnnotations);
         }
     }
 
@@ -260,9 +198,9 @@ namespace pwiz.Skyline.Model.ElementLocators
         {
         }
 
-        public override string ElementType
+        public override string DocKeyType
         {
-            get { return "MoleculeResult"; } // Not L10N
+            get { return "MoleculeResult"; }
         }
 
         protected override IEnumerable<Tuple<int, PeptideChromInfo>> EnumerateChromInfos(PeptideDocNode parent)
@@ -280,66 +218,9 @@ namespace pwiz.Skyline.Model.ElementLocators
             }
         }
 
-        public override int GetOptimizationStep(PeptideChromInfo chromInfo)
+        protected override int GetOptimizationStep(PeptideChromInfo chromInfo)
         {
             return 0;
-        }
-    }
-
-    public class PrecursorResultRef : ResultRef<TransitionGroupDocNode, TransitionGroupChromInfo>
-    {
-        public static readonly PrecursorResultRef PROTOTYPE = new PrecursorResultRef();
-
-        private PrecursorResultRef() : base(PrecursorRef.PROTOTYPE)
-        {
-            
-        }
-
-        public override string ElementType
-        {
-            get { return "PrecursorResult"; } // Not L10N
-        }
-
-        protected override IEnumerable<Tuple<int, TransitionGroupChromInfo>> EnumerateChromInfos(TransitionGroupDocNode parent)
-        {
-            if (parent.Results == null)
-            {
-                yield break;
-            }
-            for (int i = 0; i < parent.Results.Count; i++)
-            {
-                foreach (var precursorChromInfo in parent.Results[i])
-                {
-                    yield return Tuple.Create(i, precursorChromInfo);
-                }
-            }
-        }
-
-        public override int GetOptimizationStep(TransitionGroupChromInfo chromInfo)
-        {
-            return chromInfo.OptimizationStep;
-        }
-
-        public override Annotations GetAnnotations(TransitionGroupChromInfo chromInfo)
-        {
-            if (chromInfo.OptimizationStep != 0)
-            {
-                return null;
-            }
-            return chromInfo.Annotations;
-        }
-
-        public override AnnotationDef.AnnotationTargetSet AnnotationTargets
-        {
-            get
-            {
-                return AnnotationDef.AnnotationTargetSet.Singleton(AnnotationDef.AnnotationTarget.precursor_result);
-            }
-        }
-
-        public override TransitionGroupChromInfo ChangeAnnotations(TransitionGroupChromInfo chromInfo, Annotations newAnnotations)
-        {
-            return chromInfo.ChangeAnnotations(newAnnotations);
         }
     }
 }

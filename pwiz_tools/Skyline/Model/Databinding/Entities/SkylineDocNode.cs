@@ -204,7 +204,7 @@ namespace pwiz.Skyline.Model.Databinding.Entities
 
         public sealed override ElementRef GetElementRef()
         {
-            return DataSchema.ElementRefs.GetNodeRef(IdentityPath);
+            return DataSchema.ElementRefCache.GetNodeRef(IdentityPath);
         }
     }
 }

@@ -5087,6 +5087,16 @@ namespace pwiz.Skyline
                 NavigateToBookmark(bookmark);
             }
         }
+
+        private void exportAnnotationsMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        public void ExportAnnotations(string filename)
+        {
+            
+        }
     }
 }
 

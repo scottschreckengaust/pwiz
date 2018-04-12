@@ -1,22 +1,4 @@
-﻿/*
- * Original author: Nicholas Shulman <nicksh .at. u.washington.edu>,
- *                  MacCoss Lab, Department of Genome Sciences, UW
- *
- * Copyright 2018 University of Washington - Seattle, WA
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -24,21 +6,14 @@ using System.Text;
 using System.Text.RegularExpressions;
 using pwiz.Common.Collections;
 using pwiz.Common.SystemUtil;
-using pwiz.Skyline.Properties;
 using pwiz.Skyline.Util.Extensions;
 
 namespace pwiz.Skyline.Model.ElementLocators
 {
-    /// <summary>
-    /// Unique identifier of anything in a Skyline Document.
-    /// An ElementLocator starts with a typename followed by a colon.
-    /// The element locator consists of a series of levels separated by slashes.
-    /// A level has a name, optionally followed by a '?' and a series of attrname=attrvalue attributes.
-    /// If a name, attrname, or attrvalue contains any special characters, then it gets quoted with double-quote characters,
-    /// and any quotes within the thing get replaced with two double-quote characters.
-    /// </summary>
     public sealed class ElementLocator : Immutable
     {
+        public static readonly ElementLocator ROOT
+            = new ElementLocator(string.Empty, ImmutableList.Empty<KeyValuePair<string, string>>());
         private static readonly Regex REGEX_SPECIALCHARS = new Regex("[/?&=\"]"); // Not L10N
 
         public ElementLocator(string name, IEnumerable<KeyValuePair<string, string>> attributes)
@@ -53,10 +28,6 @@ namespace pwiz.Skyline.Model.ElementLocators
             private set;
         }
 
-        /// <summary>
-        /// The type of this ElementLocator. Valid ElementLocator's have a Type. This is used by <see cref="ElementRefs.FromObjectReference"/> 
-        /// to decide what class of ElementRef to return. This should match the <see cref="ElementRef.ElementType"/> of some type of ElementRef.
-        /// </summary>
         public string Type
         {
             get;
@@ -65,11 +36,6 @@ namespace pwiz.Skyline.Model.ElementLocators
         public string Name { get; private set; }
         public ImmutableList<KeyValuePair<string, string>> Attributes { get; private set; }
 
-        /// <summary>
-        /// Returns an ElementLocator with the new parent.
-        /// The parent's Type is changed to null, since only the child ElementLocator has a type. The type of its parent
-        /// can be inferred from the type of the child.
-        /// </summary>
         public ElementLocator ChangeParent(ElementLocator parent)
         {
             if (ReferenceEquals(Parent, parent))
@@ -140,7 +106,7 @@ namespace pwiz.Skyline.Model.ElementLocators
             int ichColon = str.IndexOf(':');
             if (ichColon < 0)
             {
-                string message = string.Format(Resources.ElementLocator_Parse__0__is_not_a_valid_element_locator_, str);
+                string message = string.Format("{0} is not a valid element locator.", str);
                 throw new FormatException(message);
             }
             var type = str.Substring(0, ichColon);
@@ -153,7 +119,7 @@ namespace pwiz.Skyline.Model.ElementLocators
             }
             if (result == null)
             {
-                string message = string.Format(Resources.ElementLocator_Parse__0__is_not_a_valid_element_locator_, str);
+                string message = string.Format("{0} is not a valid element locator.", str);
                 throw new FormatException(message);
             }
             result = result.ChangeType(type);
@@ -164,7 +130,7 @@ namespace pwiz.Skyline.Model.ElementLocators
         {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append(Type ?? string.Empty);
-            stringBuilder.Append(":"); // Not L10N
+            stringBuilder.Append(":");
             AppendToStringBuilder(stringBuilder);
             return stringBuilder.ToString();
         }
@@ -174,19 +140,19 @@ namespace pwiz.Skyline.Model.ElementLocators
             if (Parent != null)
             {
                 Parent.AppendToStringBuilder(stringBuilder);
-                stringBuilder.Append("/"); // Not L10N
+                stringBuilder.Append("/");
             }
             stringBuilder.Append(QuoteIfSpecial(Name));
             if (Attributes.Any())
             {
-                stringBuilder.Append("?"); // Not L10N
-                stringBuilder.Append(string.Join("&", Attributes.Select(attr => // Not L10N
+                stringBuilder.Append("?");
+                stringBuilder.Append(string.Join("&", Attributes.Select(attr =>
                 {
                     if (attr.Value == null)
                     {
                         return QuoteIfSpecial(attr.Key);
                     }
-                    return QuoteIfSpecial(attr.Key) + "=" + QuoteIfSpecial(attr.Value); // Not L10N
+                    return QuoteIfSpecial(attr.Key) + "=" + QuoteIfSpecial(attr.Value);
                 })));
             }
         }
@@ -197,7 +163,7 @@ namespace pwiz.Skyline.Model.ElementLocators
             {
                 return str;
             }
-            return "\"" + str.Replace("\"", "\"\"") + "\""; // Not L10N
+            return "\"" + str.Replace("\"", "\"\"") + "\"";
         }
 
         private static TokenType? TokenTypeFromChar(char ch)
@@ -225,7 +191,7 @@ namespace pwiz.Skyline.Model.ElementLocators
                 int chInt = reader.Read();
                 if (chInt < 0)
                 {
-                    throw UnexpectedException(reader, Resources.ElementLocator_ReadQuotedString_End_of_text);
+                    throw UnexpectedException(reader, "End of text");
                 }
                 char ch = (char)chInt;
                 if (ch == chEndQuote)
@@ -249,19 +215,12 @@ namespace pwiz.Skyline.Model.ElementLocators
             return stringBuilder.ToString();
         }
 
-        private static Exception UnexpectedException(StringReader reader, KeyValuePair<TokenType, string> token)
-        {
-            return UnexpectedException(reader, "'" + token.Value + "'"); // Not L10N
-        }
-
         private static Exception UnexpectedException(StringReader reader, string unexpected)
         {
             var remainder = reader.ReadToEnd();
             string fullText = reader.ToString();
-            // ReSharper disable PossibleNullReferenceException
             int position = fullText.Length - remainder.Length;
-            // ReSharper restore PossibleNullReferenceException
-            string fullMessage = TextUtil.LineSeparate(string.Format(Resources.ElementLocator_UnexpectedException__0__was_unexpected_in___1___at_position__2__, unexpected, fullText, position));
+            string fullMessage = TextUtil.LineSeparate(string.Format("{0} was unexpected in {1} at position {2}", unexpected, fullText, position));
             return new FormatException(fullMessage);
         }
 
@@ -327,7 +286,7 @@ namespace pwiz.Skyline.Model.ElementLocators
                         {
                             if (!string.IsNullOrEmpty(attributeValue))
                             {
-                                throw UnexpectedException(reader, tk);
+                                throw UnexpectedException(reader, tk.Value);
                             }
                             attributeValue = tk.Value;
                         }
@@ -355,7 +314,7 @@ namespace pwiz.Skyline.Model.ElementLocators
                     case TokenType.And:
                         if (keyName == null)
                         {
-                            throw UnexpectedException(reader, tk);
+                            throw UnexpectedException(reader, tk.Value);
                         }
                         attributes.Add(new KeyValuePair<string, string>(attributeName ?? string.Empty, attributeValue));
                         attributeName = null;
@@ -365,7 +324,7 @@ namespace pwiz.Skyline.Model.ElementLocators
                         attributeName = attributeName ?? string.Empty;
                         if (attributeValue != null)
                         {
-                            throw UnexpectedException(reader, tk);
+                            throw UnexpectedException(reader, tk.Value);
                         }
                         attributeValue = string.Empty;
                         break;
