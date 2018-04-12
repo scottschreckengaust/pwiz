@@ -129,7 +129,7 @@ namespace pwiz.Skyline.Model
             }
             return new ModifiedSequence(unmodifiedSequence, explicitMods, settings.TransitionSettings.Prediction.PrecursorMassType);
         }
-        
+
         private readonly string _unmodifiedSequence;
         private readonly ImmutableList<Modification> _explicitMods;
         private readonly MassType _defaultMassType;
@@ -168,6 +168,16 @@ namespace pwiz.Skyline.Model
         public override string ToString()
         {
             return Format(mods=>FormatMassModification(mods, _defaultMassType, false));
+        }
+
+        public string GetUnmodifiedSequence()
+        {
+            return _unmodifiedSequence;
+        }
+
+        public ImmutableList<Modification> GetModifications()
+        {
+            return _explicitMods;
         }
 
         private string FormatModsIndividually(Func<Modification, string> modFormatter)
@@ -310,12 +320,22 @@ namespace pwiz.Skyline.Model
             public ExplicitMod ExplicitMod { get; private set; }
             public StaticMod StaticMod { get { return ExplicitMod.Modification; } }
             public int IndexAA {get { return ExplicitMod.IndexAA; } }
+
+            public Modification ChangeIndexAa(int newIndexAa)
+            {
+                return new Modification(new ExplicitMod(newIndexAa, ExplicitMod.Modification), MonoisotopicMass, AverageMass);
+            }
             public string Name { get { return StaticMod.Name; } }
             public string ShortName { get { return StaticMod.ShortName; } }
             public string Formula { get { return StaticMod.Formula; } }
             public int? UnimodId { get { return StaticMod.UnimodId; } }
             public double MonoisotopicMass { get; private set; }
             public double AverageMass { get; private set; }
+
+            public MassShift MassShift
+            {
+                get { return new MassShift(MonoisotopicMass, AverageMass); }
+            }
 
             protected bool Equals(Modification other)
             {

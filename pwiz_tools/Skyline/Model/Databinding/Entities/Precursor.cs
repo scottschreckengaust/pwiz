@@ -488,6 +488,28 @@ namespace pwiz.Skyline.Model.Databinding.Entities
         {
             get { return PrecursorRef.PROTOTYPE; }
         }
+
+        [InvariantDisplayName("PrecursorMzDistribution")]
+        [ChildDisplayName("Precursor{0}")]
+        [Format(Formats.Mz)]
+        public MzDistribution MzDistribution
+        {
+            get
+            {
+                var fragmentedMolecule = GetFragmentedMolecule();
+                var settings = FragmentedMolecule.Settings.FromSrmSettings(SrmDocument.Settings);
+                var mzDistribution = settings.GetMassDistribution(fragmentedMolecule.PrecursorFormula,
+                    fragmentedMolecule.PrecursorMassShift, fragmentedMolecule.PrecursorCharge);
+                var monoMz = settings.GetMonoMass(fragmentedMolecule.PrecursorFormula,
+                    fragmentedMolecule.PrecursorMassShift, fragmentedMolecule.PrecursorCharge);
+                return new MzDistribution(mzDistribution, monoMz);
+            }
+        }
+
+        public FragmentedMolecule GetFragmentedMolecule()
+        {
+            return FragmentedMolecule.GetFragmentedMolecule(SrmDocument.Settings, Peptide.DocNode, DocNode, null);
+        }
     }
 
     public class PrecursorResultSummary : SkylineObject

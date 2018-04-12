@@ -77,7 +77,12 @@ namespace pwiz.Skyline.Controls
             }
             catch (FormatException)
             {
-                ShowTextBoxError(control, Resources.MessageBoxHelper_ValidateDecimalTextBox__0__must_contain_a_decimal_value);
+                ShowTextBoxError(control,
+                    Resources.MessageBoxHelper_ValidateDecimalTextBox__0__must_contain_a_decimal_value);
+            }
+            catch (Exception x)
+            {
+                ShowTextBoxException(control, x);
             }
             return valid;
         }
@@ -139,9 +144,6 @@ namespace pwiz.Skyline.Controls
             ShowTextBoxError(control, message, new object[] { null });
         }
 
-
-
-
         /// <summary>
         /// Validates a TextBox that should contain a integer value, possibly negative.
         /// </summary>
@@ -160,7 +162,10 @@ namespace pwiz.Skyline.Controls
                 var n = int.Parse(control.Text);
                 if ((n == 0) || (Math.Abs(n) < absMin) || (Math.Abs(n) > absMax))
                 {
-                    ShowTextBoxError(control, Resources.MessageBoxHelper_ValidateSignedNumberTextBox_Value__0__must_be_between__1__and__2__or__3__and__4__, n, -absMax, -absMin, absMin, absMax);
+                    ShowTextBoxError(control,
+                        Resources
+                            .MessageBoxHelper_ValidateSignedNumberTextBox_Value__0__must_be_between__1__and__2__or__3__and__4__,
+                        n, -absMax, -absMin, absMin, absMax);
                 }
                 else
                 {
@@ -171,6 +176,10 @@ namespace pwiz.Skyline.Controls
             catch (FormatException)
             {
                 ShowTextBoxError(control, Resources.MessageBoxHelper_ValidateNumberTextBox__0__must_contain_an_integer);
+            }
+            catch (Exception x)
+            {
+                ShowTextBoxException(control, x);
             }
             return valid;
         }
@@ -192,9 +201,13 @@ namespace pwiz.Skyline.Controls
             {
                 int n = int.Parse(control.Text);
                 if (min.HasValue && n < min.Value)
-                    ShowTextBoxError(control, Resources.MessageBoxHelper_ValidateDecimalTextBox__0__must_be_greater_than_or_equal_to__1__, null, min);
+                    ShowTextBoxError(control,
+                        Resources.MessageBoxHelper_ValidateDecimalTextBox__0__must_be_greater_than_or_equal_to__1__,
+                        null, min);
                 else if (max.HasValue && n > max.Value)
-                    ShowTextBoxError(control, Resources.MessageBoxHelper_ValidateDecimalTextBox__0__must_be_less_than_or_equal_to__1__, null, max);
+                    ShowTextBoxError(control,
+                        Resources.MessageBoxHelper_ValidateDecimalTextBox__0__must_be_less_than_or_equal_to__1__, null,
+                        max);
                 else
                 {
                     val = n;
@@ -204,6 +217,10 @@ namespace pwiz.Skyline.Controls
             catch (FormatException)
             {
                 ShowTextBoxError(control, Resources.MessageBoxHelper_ValidateNumberTextBox__0__must_contain_an_integer);
+            }
+            catch (Exception x)
+            {
+                ShowTextBoxException(control, x);
             }
             return valid;
         }
@@ -272,6 +289,22 @@ namespace pwiz.Skyline.Controls
             var textBox = control as TextBox;
             if(textBox != null)
                 textBox.SelectAll();
+        }
+
+        public void ShowTextBoxException(Control control, Exception exception)
+        {
+            if (!_showMessages)
+            {
+                return;
+            }
+            string message = TextUtil.LineSeparate("There was an error trying to handle this value:", exception.Message);
+            MessageDlg.ShowWithException(_parent, message, exception);
+            control.Focus();
+            var textBox = control as TextBox;
+            if (textBox != null)
+            {
+                textBox.SelectAll();
+            }
         }
 
         /// <summary>

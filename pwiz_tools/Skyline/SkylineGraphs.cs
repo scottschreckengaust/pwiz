@@ -5757,5 +5757,25 @@ namespace pwiz.Skyline
         }
 
         #endregion
+
+
+        private void isotopeDistributionMenuItem_Click(object sender, EventArgs e)
+        {
+            ShowIsotopeDistribution();
+        }
+
+        public void ShowIsotopeDistribution()
+        {
+            var isotopeDistributionForm = Application.OpenForms.OfType<IsotopeDistForm>().FirstOrDefault();
+            if (isotopeDistributionForm == null)
+            {
+                isotopeDistributionForm = new IsotopeDistForm(this);
+                isotopeDistributionForm.Show(this);
+            }
+            else
+            {
+                isotopeDistributionForm.Activate();
+            }
+        }
     }
 }
