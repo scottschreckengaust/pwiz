@@ -359,11 +359,8 @@ namespace pwiz.Skyline
             }
             try
             {
-                var docOriginal = DocContainer.Document;
-                var documentAnnotations = new DocumentAnnotations(docOriginal);
-                var docNew =
-                    documentAnnotations.ReadAnnotationsFromFile(CancellationToken.None, commandArgs.ImportAnnotations);
-                DocContainer.SetDocument(docNew, docOriginal);
+                var documentAnnotations = new DocumentAnnotations(_doc);
+                _doc = documentAnnotations.ReadAnnotationsFromFile(CancellationToken.None, commandArgs.ImportAnnotations);
                 return true;
             }
             catch (Exception x)

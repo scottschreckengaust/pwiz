@@ -287,11 +287,8 @@ namespace pwiz.Skyline.Model.ElementLocators
         {
             using (var streamReader = new StreamReader(filename))
             {
-                return LocalizationHelper.CallWithCulture(CultureInfo.InvariantCulture, ()=>
-                {
-                    var dsvReader = new DsvFileReader(streamReader, TextUtil.SEPARATOR_CSV);
-                    return ReadAllAnnotations(cancellationToken, dsvReader);
-                });
+                var dsvReader = new DsvFileReader(streamReader, TextUtil.SEPARATOR_CSV);
+                return ReadAllAnnotations(cancellationToken, dsvReader);
             }
         }
 
