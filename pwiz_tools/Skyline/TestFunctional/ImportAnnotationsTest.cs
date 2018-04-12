@@ -61,6 +61,9 @@ namespace pwiz.SkylineTestFunctional
             }
         }
 
+        /// <summary>
+        /// Adds a bunch of annotations to all of the elements in a Document.
+        /// </summary>
         private class AnnotationAdder
         {
             private int _counter;
@@ -186,7 +189,7 @@ namespace pwiz.SkylineTestFunctional
                 }
                 annotations =
                     annotations.ChangeAnnotation("Number", (_counter++* .1).ToString(CultureInfo.InvariantCulture));
-                if (0 != (_counter & 7))
+                if (0 != (_elementCount & 2))
                 {
                     _counter++;
                     annotations = annotations.ChangeAnnotation("TrueFalse", "TrueFalse");
@@ -202,7 +205,6 @@ namespace pwiz.SkylineTestFunctional
                 return annotationTarget.ToString();
             }
 
-            public int AnnotationCount { get { return _counter; } }
             public int ElementCount { get { return _elementCount; } }
         }
     }
