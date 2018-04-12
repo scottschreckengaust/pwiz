@@ -7840,6 +7840,16 @@ namespace pwiz.Skyline.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The element &apos;{0}&apos; cannot have annotations..
+        /// </summary>
+        public static string DocumentAnnotations_AnnotationsNotSupported_The_element___0___cannot_have_annotations_ {
+            get {
+                return ResourceManager.GetString("DocumentAnnotations_AnnotationsNotSupported_The_element___0___cannot_have_annotat" +
+                        "ions_", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Could not find element &apos;{0}&apos;..
         /// </summary>
         public static string DocumentAnnotations_ElementNotFoundException_Could_not_find_element___0___ {
