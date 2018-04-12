@@ -4021,33 +4021,6 @@ namespace pwiz.Skyline.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Duplicate column &apos;{0}&apos;.
-        /// </summary>
-        public static string Columns_Columns_Duplicate_column___0__ {
-            get {
-                return ResourceManager.GetString("Columns_Columns_Duplicate_column___0__", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Missing column &apos;{0}&apos;.
-        /// </summary>
-        public static string Columns_Columns_Missing_column___0__ {
-            get {
-                return ResourceManager.GetString("Columns_Columns_Missing_column___0__", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Unrecognized column &apos;{0}&apos;.
-        /// </summary>
-        public static string Columns_Columns_Unrecognized_column___0__ {
-            get {
-                return ResourceManager.GetString("Columns_Columns_Unrecognized_column___0__", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Unable to find table for {0}.
         /// </summary>
         public static string ColumnSet_GetColumnInfos_Unable_to_find_table_for__0_ {
@@ -5185,15 +5158,6 @@ namespace pwiz.Skyline.Properties {
         public static string CommandLine_GetDataSources_Error__No_data_sources_found_in_directory__0__ {
             get {
                 return ResourceManager.GetString("CommandLine_GetDataSources_Error__No_data_sources_found_in_directory__0__", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Failed while reading annotations..
-        /// </summary>
-        public static string CommandLine_ImportAnnotations_Failed_while_reading_annotations_ {
-            get {
-                return ResourceManager.GetString("CommandLine_ImportAnnotations_Failed_while_reading_annotations_", resourceCulture);
             }
         }
         
@@ -7876,21 +7840,29 @@ namespace pwiz.Skyline.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The element &apos;{0}&apos; cannot have annotations..
-        /// </summary>
-        public static string DocumentAnnotations_AnnotationsNotSupported_The_element___0___cannot_have_annotations_ {
-            get {
-                return ResourceManager.GetString("DocumentAnnotations_AnnotationsNotSupported_The_element___0___cannot_have_annotat" +
-                        "ions_", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Could not find element &apos;{0}&apos;..
         /// </summary>
         public static string DocumentAnnotations_ElementNotFoundException_Could_not_find_element___0___ {
             get {
                 return ResourceManager.GetString("DocumentAnnotations_ElementNotFoundException_Could_not_find_element___0___", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Missing column &apos;{0}&apos;..
+        /// </summary>
+        public static string DocumentAnnotations_EnsureColumn_Missing_column___0___ {
+            get {
+                return ResourceManager.GetString("DocumentAnnotations_EnsureColumn_Missing_column___0___", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No such annotation &apos;{0}&apos;.
+        /// </summary>
+        public static string DocumentAnnotations_ReadAllAnnotations_No_such_annotation___0__ {
+            get {
+                return ResourceManager.GetString("DocumentAnnotations_ReadAllAnnotations_No_such_annotation___0__", resourceCulture);
             }
         }
         
@@ -8435,24 +8407,6 @@ namespace pwiz.Skyline.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Adduct.
-        /// </summary>
-        public static string EditDriftTimePredictorDlg_EditDriftTimePredictorDlg_Adduct {
-            get {
-                return ResourceManager.GetString("EditDriftTimePredictorDlg_EditDriftTimePredictorDlg_Adduct", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Molecule.
-        /// </summary>
-        public static string EditDriftTimePredictorDlg_EditDriftTimePredictorDlg_Molecule {
-            get {
-                return ResourceManager.GetString("EditDriftTimePredictorDlg_EditDriftTimePredictorDlg_Molecule", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Finding ion mobility values for peaks.
         /// </summary>
         public static string EditDriftTimePredictorDlg_GetDriftTimesFromResults_Finding_ion_mobility_values_for_peaks {
@@ -8463,12 +8417,12 @@ namespace pwiz.Skyline.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to An ion mobility predictor with the name {0} already exists..
+        ///   Looks up a localized string similar to A drift time predictor with the name {0} already exists..
         /// </summary>
-        public static string EditDriftTimePredictorDlg_OkDialog_An_ion_mobility_predictor_with_the_name__0__already_exists_ {
+        public static string EditDriftTimePredictorDlg_OkDialog_A_drift_time_predictor_with_the_name__0__already_exists_ {
             get {
-                return ResourceManager.GetString("EditDriftTimePredictorDlg_OkDialog_An_ion_mobility_predictor_with_the_name__0__al" +
-                        "ready_exists_", resourceCulture);
+                return ResourceManager.GetString("EditDriftTimePredictorDlg_OkDialog_A_drift_time_predictor_with_the_name__0__alrea" +
+                        "dy_exists_", resourceCulture);
             }
         }
         
@@ -12048,17 +12002,6 @@ namespace pwiz.Skyline.Properties {
         public static string FileStreamManager_CreateStream_Unexpected_error_opening__0__ {
             get {
                 return ResourceManager.GetString("FileStreamManager_CreateStream_Unexpected_error_opening__0__", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Access Denied: unable to create a file in the folder &quot;{0}&quot;. Adjust the folder write permissions or retry the operation after moving or copying files to a different folder..
-        /// </summary>
-        public static string FileStreamManager_GetTempFileName_Access_Denied__unable_to_create_a_file_in_the_folder___0____Adjust_the_folder_write_permissions_or_retry_the_operation_after_moving_or_copying_files_to_a_different_folder_ {
-            get {
-                return ResourceManager.GetString("FileStreamManager_GetTempFileName_Access_Denied__unable_to_create_a_file_in_the_f" +
-                        "older___0____Adjust_the_folder_write_permissions_or_retry_the_operation_after_mo" +
-                        "ving_or_copying_files_to_a_different_folder_", resourceCulture);
             }
         }
         
@@ -23985,15 +23928,6 @@ namespace pwiz.Skyline.Properties {
         public static string SkylineWindow_graphChromatogram_PickedPeak_Pick_peak__0_F01_ {
             get {
                 return ResourceManager.GetString("SkylineWindow_graphChromatogram_PickedPeak_Pick_peak__0_F01_", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Import Annotations.
-        /// </summary>
-        public static string SkylineWindow_ImportAnnotations_Import_Annotations {
-            get {
-                return ResourceManager.GetString("SkylineWindow_ImportAnnotations_Import_Annotations", resourceCulture);
             }
         }
         

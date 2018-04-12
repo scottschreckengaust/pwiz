@@ -1,4 +1,21 @@
-﻿
+﻿/*
+ * Original author: Nicholas Shulman <nicksh .at. u.washington.edu>,
+ *                  MacCoss Lab, Department of Genome Sciences, UW
+ *
+ * Copyright 2018 University of Washington - Seattle, WA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -6,19 +23,24 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using pwiz.Common.DataBinding;
-using pwiz.Common.SystemUtil;
 using pwiz.Skyline.Model.DocSettings;
 using pwiz.Skyline.Model.Hibernate;
 using pwiz.Skyline.Model.Results;
+using pwiz.Skyline.Properties;
 using pwiz.Skyline.Util.Extensions;
 
 namespace pwiz.Skyline.Model.ElementLocators
 {
+    /// <summary>
+    /// Class for importing and exporting all of the annotations in a Skyline document.
+    /// </summary>
     public class DocumentAnnotations
     {
+        // ReSharper disable NonLocalizedString
         public const string COLUMN_LOCATOR = "ElementLocator";
         public const string COLUMN_ANNOTATION_NAME = "AnnotationName";
         public const string COLUMN_ANNOTATION_VALUE = "AnnotationValue";
+        // ReSharper restore NonLocalizedString
         private readonly ElementRefs _elementRefs;
         private readonly IDictionary<NodeRef, IdentityPath> _identityPaths 
             = new Dictionary<NodeRef, IdentityPath>();
@@ -318,7 +340,7 @@ namespace pwiz.Skyline.Model.ElementLocators
                 AnnotationDef annotationDef;
                 if (!annotationDefs.TryGetValue(annotationName, out annotationDef))
                 {
-                    throw new InvalidDataException(string.Format("No such annotation '{0}'", annotationName));
+                    throw new InvalidDataException(string.Format(Resources.DocumentAnnotations_ReadAllAnnotations_No_such_annotation___0__, annotationName));
                 }
                 if (annotationDef.AnnotationTargets.Intersect(elementRef.AnnotationTargets).IsEmpty)
                 {
@@ -459,7 +481,7 @@ namespace pwiz.Skyline.Model.ElementLocators
             int icol = fileReader.GetFieldIndex(name);
             if (icol < 0)
             {
-                throw new InvalidDataException(string.Format("Missing column '{0}'.", name));
+                throw new InvalidDataException(string.Format(Resources.DocumentAnnotations_EnsureColumn_Missing_column___0___, name));
             }
             return icol;
         }
@@ -482,12 +504,12 @@ namespace pwiz.Skyline.Model.ElementLocators
 
         private Exception ElementNotFoundException(ElementRef elementRef)
         {
-            return new InvalidDataException(string.Format("Could not find element '{0}'.", elementRef));
+            return new InvalidDataException(string.Format(Resources.DocumentAnnotations_ElementNotFoundException_Could_not_find_element___0___, elementRef));
         }
 
         private Exception AnnotationDoesNotApplyException(AnnotationDef annotationDef, ElementRef elementRef)
         {
-            return new InvalidDataException(string.Format("Annotation '{0}' does not apply to element '{1}'.",
+            return new InvalidDataException(string.Format(Resources.DocumentAnnotations_AnnotationDoesNotApplyException_Annotation___0___does_not_apply_to_element___1___,
                 annotationDef.Name, elementRef));
         }
 
