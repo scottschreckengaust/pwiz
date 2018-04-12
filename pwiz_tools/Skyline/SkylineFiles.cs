@@ -3155,11 +3155,15 @@ namespace pwiz.Skyline
                     }
                     if (newDocument != null)
                     {
-                        if (!SetDocument(newDocument, originalDocument))
+                        ModifyDocument(Resources.SkylineWindow_ImportAnnotations_Import_Annotations, doc =>
                         {
-                            throw new ApplicationException(Resources
-                                .SkylineDataSchema_VerifyDocumentCurrent_The_document_was_modified_in_the_middle_of_the_operation_);
-                        }
+                            if (!ReferenceEquals(doc, originalDocument))
+                            {
+                                throw new ApplicationException(Resources
+                                    .SkylineDataSchema_VerifyDocumentCurrent_The_document_was_modified_in_the_middle_of_the_operation_);
+                            }
+                            return newDocument;
+                        });
                     }
                 }
             }

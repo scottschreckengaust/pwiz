@@ -365,7 +365,7 @@ namespace pwiz.Skyline
             }
             catch (Exception x)
             {
-                _out.WriteLine("Failed while reading annotations.");
+                _out.WriteLine(Resources.CommandLine_ImportAnnotations_Failed_while_reading_annotations_);
                 _out.WriteLine(x.Message);
                 return false;
             }

@@ -5162,6 +5162,15 @@ namespace pwiz.Skyline.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed while reading annotations..
+        /// </summary>
+        public static string CommandLine_ImportAnnotations_Failed_while_reading_annotations_ {
+            get {
+                return ResourceManager.GetString("CommandLine_ImportAnnotations_Failed_while_reading_annotations_", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Importing FASTA file {0}....
         /// </summary>
         public static string CommandLine_ImportFasta_Importing_FASTA_file__0____ {
@@ -23949,6 +23958,15 @@ namespace pwiz.Skyline.Properties {
         public static string SkylineWindow_graphChromatogram_PickedPeak_Pick_peak__0_F01_ {
             get {
                 return ResourceManager.GetString("SkylineWindow_graphChromatogram_PickedPeak_Pick_peak__0_F01_", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Import Annotations.
+        /// </summary>
+        public static string SkylineWindow_ImportAnnotations_Import_Annotations {
+            get {
+                return ResourceManager.GetString("SkylineWindow_ImportAnnotations_Import_Annotations", resourceCulture);
             }
         }
         

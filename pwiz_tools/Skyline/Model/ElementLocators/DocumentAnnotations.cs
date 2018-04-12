@@ -564,10 +564,6 @@ namespace pwiz.Skyline.Model.ElementLocators
             {
                 for (int i = 0; i < row.Count; i++)
                 {
-                    if (string.IsNullOrEmpty(row[i]))
-                    {
-                        continue;
-                    }
                     AnnotationDef.AnnotationTargetSet targets = null;
                     if (i == NoteColumn)
                     {
@@ -579,9 +575,12 @@ namespace pwiz.Skyline.Model.ElementLocators
                         annotations = SetAnnotationValue(cultureInfo, annotations, AnnotationColumns[i], row[i]);
                         targets = AnnotationColumns[i].AnnotationTargets;
                     }
-                    if (targets != null && targets.Intersect(elementRef.AnnotationTargets).IsEmpty)
+                    if (!string.IsNullOrEmpty(row[i]))
                     {
-                        throw AnnotationDoesNotApplyException(GetColumnHeaders()[i], elementRef);
+                        if (targets != null && targets.Intersect(elementRef.AnnotationTargets).IsEmpty)
+                        {
+                            throw AnnotationDoesNotApplyException(GetColumnHeaders()[i], elementRef);
+                        }
                     }
                 }
                 return annotations;
