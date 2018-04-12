@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using pwiz.Skyline.Model.DocSettings;
 using pwiz.Skyline.Model.Results;
 
 namespace pwiz.Skyline.Model.ElementLocators
@@ -7,11 +8,11 @@ namespace pwiz.Skyline.Model.ElementLocators
     public class ReplicateRef : ElementRef
     {
         public static readonly ReplicateRef PROTOTYPE = new ReplicateRef();
-        public ReplicateRef() : base(DocumentRef.PROTOTYPE)
+        private ReplicateRef() : base(DocumentRef.PROTOTYPE)
         {
         }
 
-        public override string DocKeyType
+        public override string ElementType
         {
             get { return "Replicate"; }
         }
@@ -23,7 +24,12 @@ namespace pwiz.Skyline.Model.ElementLocators
             {
                 return null;
             }
-            return measuredResults.Chromatograms.FirstOrDefault(chromSet => chromSet.Name == Name);
+            return measuredResults.Chromatograms.FirstOrDefault(Matches);
+        }
+
+        public bool Matches(ChromatogramSet chromatogramSet)
+        {
+            return chromatogramSet.Name == Name;
         }
 
         protected override IEnumerable<ElementRef> EnumerateSiblings(SrmDocument document)
@@ -38,6 +44,16 @@ namespace pwiz.Skyline.Model.ElementLocators
                 yield return ChangeName(chromatogramSet.Name);
             }
         }
+
+        public static ReplicateRef FromChromatogramSet(ChromatogramSet chromatogramSet)
+        {
+            return (ReplicateRef) PROTOTYPE.ChangeName(chromatogramSet.Name);
+        }
+
+        public override AnnotationDef.AnnotationTargetSet AnnotationTargets
+        {
+            get { return AnnotationDef.AnnotationTargetSet.Singleton(AnnotationDef.AnnotationTarget.replicate); }
+        }
     }
 
     public class ResultFileRef : ElementRef
@@ -49,7 +65,7 @@ namespace pwiz.Skyline.Model.ElementLocators
 
         }
 
-        public override string DocKeyType
+        public override string ElementType
         {
             get { return "ResultFile"; }
         }
@@ -119,5 +135,4 @@ namespace pwiz.Skyline.Model.ElementLocators
             }
         }
     }
-
 }

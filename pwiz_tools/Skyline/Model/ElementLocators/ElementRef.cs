@@ -2,34 +2,25 @@
 using System.Globalization;
 using System.Linq;
 using pwiz.Common.SystemUtil;
+using pwiz.Skyline.Model.DocSettings;
 
 namespace pwiz.Skyline.Model.ElementLocators
 {
     public abstract class ElementRef : Immutable
     {
-        private static readonly IDictionary<string, ElementRef> _prototypes 
-            = new Dictionary<string, ElementRef>();
         public const string ATTR_INDEX = "index";
 
         protected ElementRef(ElementRef parent)
         {
             Parent = parent;
             Prototype = this;
-            // ReSharper disable VirtualMemberCallInConstructor
-            _prototypes.Add(DocKeyType, this);
-            // ReSharper restore VirtualMemberCallInConstructor
         }
 
-        public static ElementRef FromObjectReference(ElementLocator objectReference)
-        {
-            var prototype = _prototypes[objectReference.Type];
-            return prototype.ChangeObjectReference(objectReference);
-        }
         public ElementRef Parent { get; private set; }
         public ElementRef Prototype { get; private set; }
         public int Index { get; private set; }
         public string Name { get; private set; }
-        public abstract string DocKeyType { get; }
+        public abstract string ElementType { get; }
 
         public ElementRef ChangeIndex(int index)
         {
@@ -67,7 +58,7 @@ namespace pwiz.Skyline.Model.ElementLocators
                 parentLocator = Parent.ToElementLocator().ChangeType(null);
             }
             return new ElementLocator(Name, GetAttributes())
-                .ChangeParent(parentLocator).ChangeType(DocKeyType);
+                .ChangeParent(parentLocator).ChangeType(ElementType);
         }
 
         public sealed override string ToString()
@@ -75,17 +66,17 @@ namespace pwiz.Skyline.Model.ElementLocators
             return ToElementLocator().ToString();
         }
 
-        protected ElementRef ChangeObjectReference(ElementLocator objectReference)
+        public ElementRef ChangeElementLocator(ElementLocator objectReference)
         {
-            var result = ChangeProp(ImClone(this), im => im.SetDocKey(objectReference));
+            var result = ChangeProp(ImClone(this), im => im.SetElementLocator(objectReference));
             if (result.Parent != null)
             {
-                result = result.ChangeParent(result.Parent.ChangeObjectReference(objectReference.Parent));
+                result = result.ChangeParent(result.Parent.ChangeElementLocator(objectReference.Parent));
             }
             return result;
         }
 
-        protected virtual void SetDocKey(ElementLocator objectReference)
+        protected virtual void SetElementLocator(ElementLocator objectReference)
         {
             Name = objectReference.Name;
             Index = ParseInt(objectReference.FindAttribute(ATTR_INDEX).Value);
@@ -157,5 +148,10 @@ namespace pwiz.Skyline.Model.ElementLocators
         }
 
         protected abstract IEnumerable<ElementRef> EnumerateSiblings(SrmDocument document);
+
+        public virtual AnnotationDef.AnnotationTargetSet AnnotationTargets
+        {
+            get { return AnnotationDef.AnnotationTargetSet.EMPTY; }
+        }
     }
 }

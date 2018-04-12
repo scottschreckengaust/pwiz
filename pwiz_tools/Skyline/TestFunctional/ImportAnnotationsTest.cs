@@ -1,22 +1,4 @@
-﻿/*
- * Original author: Nicholas Shulman <nicksh .at. u.washington.edu>,
- *                  MacCoss Lab, Department of Genome Sciences, UW
- *
- * Copyright 2018 University of Washington - Seattle, WA
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -24,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using pwiz.Common.Collections;
+using pwiz.Common.SystemUtil;
 using pwiz.Skyline.Model;
 using pwiz.Skyline.Model.DocSettings;
 using pwiz.Skyline.Model.ElementLocators;
@@ -57,22 +40,17 @@ namespace pwiz.SkylineTestFunctional
             using (var reader = new StreamReader(annotationPath))
             {
                 var lines = reader.ReadToEnd().Split('\n').Where(line=>!string.IsNullOrEmpty(line)).ToArray();
-                Assert.AreEqual(annotationAdder.ElementCount + 1, lines.Length);
+                Assert.AreEqual(annotationAdder.AnnotationCount + 1, lines.Length);
             }
         }
 
-        /// <summary>
-        /// Adds a bunch of annotations to all of the elements in a Document.
-        /// </summary>
         private class AnnotationAdder
         {
             private int _counter;
-            private int _elementCount;
 
             public SrmDocument AddAnnotationTestValues(SrmDocument document)
             {
                 _counter = 0;
-                _elementCount = 0;
                 document = document.ChangeSettings(document.Settings.ChangeDataSettings(
                     document.Settings.DataSettings.ChangeAnnotationDefs(ImmutableList.ValueOf(GetTestAnnotations()))));
                 var measuredResults = document.MeasuredResults;
@@ -81,7 +59,6 @@ namespace pwiz.SkylineTestFunctional
                     var chromatograms = measuredResults.Chromatograms.ToArray();
                     for (int i = 0; i < chromatograms.Length; i++)
                     {
-                        _elementCount++;
                         chromatograms[i] = chromatograms[i].ChangeAnnotations(
                             AddAnnotations(chromatograms[i].Annotations, AnnotationDef.AnnotationTarget.replicate));
                     }
@@ -91,14 +68,12 @@ namespace pwiz.SkylineTestFunctional
                 for (int iProtein = 0; iProtein < proteins.Length; iProtein++)
                 {
                     var protein = proteins[iProtein];
-                    _elementCount++;
                     protein = (PeptideGroupDocNode)protein.ChangeAnnotations(AddAnnotations(protein.Annotations,
                         AnnotationDef.AnnotationTarget.protein));
                     var peptides = protein.Molecules.ToArray();
                     for (int iPeptide = 0; iPeptide < peptides.Length; iPeptide++)
                     {
                         var peptide = peptides[iPeptide];
-                        _elementCount++;
                         peptide = (PeptideDocNode)peptide.ChangeAnnotations(AddAnnotations(peptide.Annotations,
                             AnnotationDef.AnnotationTarget.peptide));
                         var precursors = peptide.TransitionGroups.ToArray();
@@ -108,12 +83,10 @@ namespace pwiz.SkylineTestFunctional
                             precursor = (TransitionGroupDocNode)precursor.ChangeAnnotations(
                                 AddAnnotations(precursor.Annotations,
                                     AnnotationDef.AnnotationTarget.precursor));
-                            _elementCount++;
                             var transitions = precursor.Transitions.ToArray();
                             for (int iTransition = 0; iTransition < transitions.Length; iTransition++)
                             {
                                 var transition = transitions[iTransition];
-                                _elementCount++;
                                 transition = (TransitionDocNode)transition.ChangeAnnotations(
                                     AddAnnotations(transition.Annotations,
                                         AnnotationDef.AnnotationTarget.transition));
@@ -122,7 +95,6 @@ namespace pwiz.SkylineTestFunctional
                                     var results = transition.Results.ToArray();
                                     for (int replicateIndex = 0; replicateIndex < results.Length; replicateIndex++)
                                     {
-                                        _elementCount+=results[replicateIndex].Count;
                                         results[replicateIndex] = new ChromInfoList<TransitionChromInfo>(
                                             results[replicateIndex]
                                                 .Select(chromInfo => chromInfo.ChangeAnnotations(AddAnnotations(
@@ -138,7 +110,6 @@ namespace pwiz.SkylineTestFunctional
                                 var results = precursor.Results.ToArray();
                                 for (int replicateIndex = 0; replicateIndex < results.Length; replicateIndex++)
                                 {
-                                    _elementCount+=results[replicateIndex].Count;
                                     results[replicateIndex] = new ChromInfoList<TransitionGroupChromInfo>(
                                         results[replicateIndex].Select(chromInfo =>
                                             chromInfo.ChangeAnnotations(AddAnnotations(chromInfo.Annotations,
@@ -183,13 +154,9 @@ namespace pwiz.SkylineTestFunctional
             private Annotations AddAnnotations(Annotations annotations, AnnotationDef.AnnotationTarget annotationTarget)
             {
                 annotations = annotations.ChangeAnnotation("Text", annotationTarget + ":" + _counter++);
-                if (DocumentAnnotations.NOTE_TARGETS.Contains(annotationTarget))
-                {
-                    annotations = annotations.ChangeNote("Note" + _counter++);
-                }
                 annotations =
                     annotations.ChangeAnnotation("Number", (_counter++* .1).ToString(CultureInfo.InvariantCulture));
-                if (0 != (_elementCount & 2))
+                if (0 != (_counter & 7))
                 {
                     _counter++;
                     annotations = annotations.ChangeAnnotation("TrueFalse", "TrueFalse");
@@ -205,7 +172,7 @@ namespace pwiz.SkylineTestFunctional
                 return annotationTarget.ToString();
             }
 
-            public int ElementCount { get { return _elementCount; } }
+            public int AnnotationCount { get { return _counter; } }
         }
     }
 }

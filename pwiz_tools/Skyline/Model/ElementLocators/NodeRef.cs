@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Linq;
 using pwiz.Common.SystemUtil;
+using pwiz.Skyline.Model.DocSettings;
 
 namespace pwiz.Skyline.Model.ElementLocators
 {
@@ -147,7 +148,7 @@ namespace pwiz.Skyline.Model.ElementLocators
         {
         }
 
-        public override string DocKeyType
+        public override string ElementType
         {
             get { return "MoleculeGroup"; }
         }
@@ -161,6 +162,11 @@ namespace pwiz.Skyline.Model.ElementLocators
         {
             return (MoleculeGroupRef)PROTOTYPE.ChangeIdentityPath(document, new IdentityPath(peptideGroupDocNode.Id));
         }
+        public override AnnotationDef.AnnotationTargetSet AnnotationTargets
+        {
+            get { return AnnotationDef.AnnotationTargetSet.Singleton(AnnotationDef.AnnotationTarget.protein); }
+        }
+
     }
 
     public class MoleculeRef : NodeRef<PeptideDocNode>
@@ -172,7 +178,7 @@ namespace pwiz.Skyline.Model.ElementLocators
         {
         }
 
-        public override string DocKeyType
+        public override string ElementType
         {
             get { return "Molecule"; }
         }
@@ -206,6 +212,11 @@ namespace pwiz.Skyline.Model.ElementLocators
             }
             return (MoleculeRef)result;
         }
+        public override AnnotationDef.AnnotationTargetSet AnnotationTargets
+        {
+            get { return AnnotationDef.AnnotationTargetSet.Singleton(AnnotationDef.AnnotationTarget.peptide); }
+        }
+
     }
 
     public class PrecursorRef : NodeRef<TransitionGroupDocNode>
@@ -217,7 +228,7 @@ namespace pwiz.Skyline.Model.ElementLocators
         {
         }
 
-        public override string DocKeyType
+        public override string ElementType
         {
             get { return "Precursor"; }
         }
@@ -233,6 +244,12 @@ namespace pwiz.Skyline.Model.ElementLocators
                 transitionGroupDocNode.TransitionGroup.LabelType.Name +
                 Transition.GetChargeIndicator(transitionGroupDocNode.PrecursorAdduct));
         }
+
+        public override AnnotationDef.AnnotationTargetSet AnnotationTargets
+        {
+            get { return AnnotationDef.AnnotationTargetSet.Singleton(AnnotationDef.AnnotationTarget.precursor); }
+        }
+
     }
 
     public class TransitionRef : NodeRef<TransitionDocNode>
@@ -244,7 +261,7 @@ namespace pwiz.Skyline.Model.ElementLocators
         {
         }
 
-        public override string DocKeyType
+        public override string ElementType
         {
             get { return "Transition"; }
         }
@@ -280,6 +297,12 @@ namespace pwiz.Skyline.Model.ElementLocators
                 Transition.GetChargeIndicator(transition.Transition.Adduct)
             );
         }
+
+        public override AnnotationDef.AnnotationTargetSet AnnotationTargets
+        {
+            get { return AnnotationDef.AnnotationTargetSet.Singleton(AnnotationDef.AnnotationTarget.transition); }
+        }
+
     }
 
     public class DocumentRef : NodeRef<SrmDocument>
@@ -293,7 +316,7 @@ namespace pwiz.Skyline.Model.ElementLocators
 
         }
 
-        public override string DocKeyType
+        public override string ElementType
         {
             get { return "Document"; }
         }

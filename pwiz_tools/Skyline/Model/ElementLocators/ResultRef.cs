@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using pwiz.Skyline.Model.DocSettings;
 using pwiz.Skyline.Model.Results;
 
 namespace pwiz.Skyline.Model.ElementLocators
@@ -47,6 +48,11 @@ namespace pwiz.Skyline.Model.ElementLocators
             return true;
         }
 
+        public bool Matches(ChromatogramSet chromatogramSet)
+        {
+            return Name == chromatogramSet.Name;
+        }
+
         public ChromFileInfo FindChromFileInfo(SrmDocument document)
         {
             var measuredResults = document.Settings.MeasuredResults;
@@ -59,6 +65,11 @@ namespace pwiz.Skyline.Model.ElementLocators
             {
                 return null;
             }
+            return FindChromFileInfo(chromatogramSet);
+        }
+
+        public ChromFileInfo FindChromFileInfo(ChromatogramSet chromatogramSet)
+        {
             return chromatogramSet.MSDataFileInfos.FirstOrDefault(info => Matches(info.FilePath));
         }
 
@@ -132,8 +143,17 @@ namespace pwiz.Skyline.Model.ElementLocators
         }
 
         protected abstract IEnumerable<Tuple<int, TChromInfo>> EnumerateChromInfos(TDocNode parent);
-        protected abstract int GetOptimizationStep(TChromInfo chromInfo);
+        public abstract int GetOptimizationStep(TChromInfo chromInfo);
 
+        public virtual Annotations GetAnnotations(TChromInfo chromInfo)
+        {
+            return null;
+        }
+
+        public virtual TChromInfo ChangeAnnotations(TChromInfo chromInfo, Annotations newAnnotations)
+        {
+            throw new InvalidOperationException();
+        }
 
         public ResultRef<TDocNode, TChromInfo> ChangeChromInfo(ChromatogramSet chromatogramSet, TChromInfo chromInfo)
         {
@@ -164,7 +184,7 @@ namespace pwiz.Skyline.Model.ElementLocators
 
         }
 
-        public override string DocKeyType
+        public override string ElementType
         {
             get { return "TransitionResult"; }
         }
@@ -184,9 +204,28 @@ namespace pwiz.Skyline.Model.ElementLocators
             }
         }
 
-        protected override int GetOptimizationStep(TransitionChromInfo chromInfo)
+        public override int GetOptimizationStep(TransitionChromInfo chromInfo)
         {
             return chromInfo.OptimizationStep;
+        }
+
+        public override Annotations GetAnnotations(TransitionChromInfo chromInfo)
+        {
+            if (chromInfo.OptimizationStep != 0)
+            {
+                return null;
+            }
+            return chromInfo.Annotations;
+        }
+
+        public override AnnotationDef.AnnotationTargetSet AnnotationTargets
+        {
+            get { return AnnotationDef.AnnotationTargetSet.Singleton(AnnotationDef.AnnotationTarget.transition_result); }
+        }
+
+        public override TransitionChromInfo ChangeAnnotations(TransitionChromInfo chromInfo, Annotations newAnnotations)
+        {
+            return chromInfo.ChangeAnnotations(newAnnotations);
         }
     }
 
@@ -198,7 +237,7 @@ namespace pwiz.Skyline.Model.ElementLocators
         {
         }
 
-        public override string DocKeyType
+        public override string ElementType
         {
             get { return "MoleculeResult"; }
         }
@@ -218,9 +257,66 @@ namespace pwiz.Skyline.Model.ElementLocators
             }
         }
 
-        protected override int GetOptimizationStep(PeptideChromInfo chromInfo)
+        public override int GetOptimizationStep(PeptideChromInfo chromInfo)
         {
             return 0;
+        }
+    }
+
+    public class PrecursorResultRef : ResultRef<TransitionGroupDocNode, TransitionGroupChromInfo>
+    {
+        public static readonly PrecursorResultRef PROTOTYPE = new PrecursorResultRef();
+
+        private PrecursorResultRef() : base(PrecursorRef.PROTOTYPE)
+        {
+            
+        }
+
+        public override string ElementType
+        {
+            get { return "PrecursorResult"; }
+        }
+
+        protected override IEnumerable<Tuple<int, TransitionGroupChromInfo>> EnumerateChromInfos(TransitionGroupDocNode parent)
+        {
+            if (parent.Results == null)
+            {
+                yield break;
+            }
+            for (int i = 0; i < parent.Results.Count; i++)
+            {
+                foreach (var precursorChromInfo in parent.Results[i])
+                {
+                    yield return Tuple.Create(i, precursorChromInfo);
+                }
+            }
+        }
+
+        public override int GetOptimizationStep(TransitionGroupChromInfo chromInfo)
+        {
+            return chromInfo.OptimizationStep;
+        }
+
+        public override Annotations GetAnnotations(TransitionGroupChromInfo chromInfo)
+        {
+            if (chromInfo.OptimizationStep != 0)
+            {
+                return null;
+            }
+            return chromInfo.Annotations;
+        }
+
+        public override AnnotationDef.AnnotationTargetSet AnnotationTargets
+        {
+            get
+            {
+                return AnnotationDef.AnnotationTargetSet.Singleton(AnnotationDef.AnnotationTarget.precursor_result);
+            }
+        }
+
+        public override TransitionGroupChromInfo ChangeAnnotations(TransitionGroupChromInfo chromInfo, Annotations newAnnotations)
+        {
+            return chromInfo.ChangeAnnotations(newAnnotations);
         }
     }
 }

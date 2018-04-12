@@ -526,8 +526,6 @@ namespace pwiz.Skyline
             this.massErorrRetentionTimeContextMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.massErrorMassToChargContextMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.massErrorlogScaleContextMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.exportAnnotationsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.importAnnotationsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuTreeNode.SuspendLayout();
             this.contextMenuSpectrum.SuspendLayout();
             this.contextMenuChromatogram.SuspendLayout();
@@ -4033,17 +4031,6 @@ namespace pwiz.Skyline
             this.massErrorlogScaleContextMenuItem.Name = "massErrorlogScaleContextMenuItem";
             resources.ApplyResources(this.massErrorlogScaleContextMenuItem, "massErrorlogScaleContextMenuItem");
             this.massErrorlogScaleContextMenuItem.Click += new System.EventHandler(this.massErrorlogScaleContextMenuItem_Click);
-            // 
-            // exportAnnotationsMenuItem
-            // 
-            this.exportAnnotationsMenuItem.Name = "exportAnnotationsMenuItem";
-            resources.ApplyResources(this.exportAnnotationsMenuItem, "exportAnnotationsMenuItem");
-            this.exportAnnotationsMenuItem.Click += new System.EventHandler(this.exportAnnotationsMenuItem_Click);
-            // 
-            // importAnnotationsMenuItem
-            // 
-            this.importAnnotationsMenuItem.Name = "importAnnotationsMenuItem";
-            resources.ApplyResources(this.importAnnotationsMenuItem, "importAnnotationsMenuItem");
             // 
             // SkylineWindow
             // 

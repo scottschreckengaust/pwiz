@@ -359,13 +359,16 @@ namespace pwiz.Skyline
             }
             try
             {
-                var documentAnnotations = new DocumentAnnotations(_doc);
-                _doc = documentAnnotations.ReadAnnotationsFromFile(CancellationToken.None, commandArgs.ImportAnnotations);
+                var docOriginal = DocContainer.Document;
+                var documentAnnotations = new DocumentAnnotations(docOriginal);
+                var docNew =
+                    documentAnnotations.ReadAnnotationsFromFile(CancellationToken.None, commandArgs.ImportAnnotations);
+                DocContainer.SetDocument(docNew, docOriginal);
                 return true;
             }
             catch (Exception x)
             {
-                _out.WriteLine(Resources.CommandLine_ImportAnnotations_Failed_while_reading_annotations_);
+                _out.WriteLine("Failed while reading annotations.");
                 _out.WriteLine(x.Message);
                 return false;
             }

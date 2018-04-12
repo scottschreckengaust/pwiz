@@ -43,7 +43,7 @@ namespace pwiz.Skyline.Model.Databinding
             = new HashSet<IDocumentChangeListener>();
         private readonly CachedValue<ImmutableSortedList<ResultKey, Replicate>> _replicates;
         private readonly CachedValue<IDictionary<ResultFileKey, ResultFile>> _resultFiles;
-        private readonly CachedValue<ElementRefCache> _elementRefCache;
+        private readonly CachedValue<ElementRefs> _elementRefCache;
 
         private SrmDocument _batchChangesOriginalDocument;
 
@@ -56,7 +56,7 @@ namespace pwiz.Skyline.Model.Databinding
 
             _replicates = CachedValue.Create(this, CreateReplicateList);
             _resultFiles = CachedValue.Create(this, CreateResultFileList);
-            _elementRefCache = CachedValue.Create(this, () => new ElementRefCache(Document));
+            _elementRefCache = CachedValue.Create(this, () => new ElementRefs(Document));
         }
 
         protected override bool IsScalar(Type type)
@@ -201,7 +201,7 @@ namespace pwiz.Skyline.Model.Databinding
         }
 
         public ChromDataCache ChromDataCache { get; private set; }
-        public ElementRefCache ElementRefCache { get { return _elementRefCache.Value; } }
+        public ElementRefs ElementRefs { get { return _elementRefCache.Value; } }
 
         public override PropertyDescriptor GetPropertyDescriptor(Type type, string name)
         {
