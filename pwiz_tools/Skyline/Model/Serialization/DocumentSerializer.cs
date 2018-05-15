@@ -38,7 +38,6 @@ namespace pwiz.Skyline.Model.Serialization
             public const string selected_transitions = "selected_transitions";
 
             public const string audit_log = "audit_log";
-            public const string audit_log_entry = "audit_log_entry";
             public const string protein = "protein";
             public const string note = "note";
             public const string annotation = "annotation";

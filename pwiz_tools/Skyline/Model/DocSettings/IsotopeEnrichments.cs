@@ -25,6 +25,7 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 using pwiz.Common.Chemistry;
 using pwiz.Common.Collections;
+using pwiz.Common.DataBinding;
 using pwiz.Common.SystemUtil;
 using pwiz.Skyline.Properties;
 using pwiz.Skyline.Util;
@@ -32,7 +33,7 @@ using pwiz.Skyline.Util;
 namespace pwiz.Skyline.Model.DocSettings
 {
     [XmlRoot("isotope_enrichments")]
-    public sealed class IsotopeEnrichments : XmlNamedElement, IValidating
+    public sealed class IsotopeEnrichments : XmlNamedElement, IValidating, IAuditLogObject
     {
         public static readonly IsotopeEnrichments DEFAULT = new IsotopeEnrichments(Resources.IsotopeEnrichments_DEFAULT_Default,
             BioMassCalc.HeavySymbols.Select(sym => new IsotopeEnrichmentItem(sym)).ToArray());
@@ -47,6 +48,7 @@ namespace pwiz.Skyline.Model.DocSettings
             DoValidate();
         }
 
+        [DiffParent]
         public ImmutableList<IsotopeEnrichmentItem> Enrichments
         {
             get { return _isotopeEnrichments; }
@@ -151,6 +153,9 @@ namespace pwiz.Skyline.Model.DocSettings
         }
 
         #endregion
+
+        public string AuditLogText { get { return Name; } }
+        public bool IsName { get { return true; } }
     }
 
     /// <summary>
@@ -176,8 +181,11 @@ namespace pwiz.Skyline.Model.DocSettings
             DoValidate();
         }
 
+        [Diff]
         public string IsotopeSymbol { get; private set; }
+        [Diff]
         public double AtomPercentEnrichment { get; private set; }
+        [Diff]
         public string Symbol { get { return BioMassCalc.GetMonoisotopicSymbol(IsotopeSymbol); } }
         private int IsotopeIndex { get { return BioMassCalc.GetIsotopeDistributionIndex(IsotopeSymbol); } }
 

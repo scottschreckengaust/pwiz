@@ -1084,4 +1084,19 @@ higher than the other extent.</value>
   <data name="SMILES" xml:space="preserve">
     <value>Standardized molecular identifier</value>
   </data>
+  <data name="TimeStamp">
+    <value>Time at which this change was made</value>
+  </data>
+  <data name="Text">
+    <value>Description of the change</value>
+  </data>
+  <data name="DocumentFormat">
+    <value>Document version at the time the change was made</value>
+  </data>
+  <data name="User">
+    <value>User who made the change</value>
+  </data>
+  <data name="Reason">
+    <value>Reason for the change</value>
+  </data>
 </root>

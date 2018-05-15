@@ -29,7 +29,7 @@ using pwiz.Common.SystemUtil;
 namespace pwiz.Common.DataBinding
 {
     [XmlRoot("column")]
-    public class ColumnSpec
+    public class ColumnSpec : IAuditLogObject
     {
         public ColumnSpec()
         {
@@ -49,43 +49,36 @@ namespace pwiz.Common.DataBinding
             Total = that.Total;
         }
 
-        [Diff]
         public string Name { get; private set; }
         public ColumnSpec SetName(string value)
         {
             return new ColumnSpec(this){Name = value};
         }
-        [Diff]
         public string Caption { get; private set; }
         public ColumnSpec SetCaption(string value)
         {
             return new ColumnSpec(this){Caption = value};
         }
-        [Diff]
         public string Format { get; private set; }
         public ColumnSpec SetFormat(string value)
         {
             return new ColumnSpec(this){Format = value};
         }
-        [Diff]
         public bool Hidden { get; private set; }
         public ColumnSpec SetHidden(bool value)
         {
             return new ColumnSpec(this) {Hidden = value};
         }
-        [Diff]
         public int? SortIndex { get; private set; }
         public ColumnSpec SetSortIndex(int? value)
         {
             return new ColumnSpec(this){SortIndex = value};
         }
-        [Diff]
         public ListSortDirection? SortDirection { get; private set; }
         public ColumnSpec SetSortDirection(ListSortDirection? value)
         {
             return new ColumnSpec(this){SortDirection = value};
         }
-        [Diff]
         public TotalOperation Total { get; private set; }
         public TotalOperation TotalOperation { get { return Total; } }
 
@@ -177,6 +170,16 @@ namespace pwiz.Common.DataBinding
         }
         // ReSharper restore NonLocalizedString
 
+        public string AuditLogText
+        {
+            get { return Caption ?? Name; }
+        }
+
+        public bool IsName
+        {
+            get { return true; }
+        }
+
         public bool Equals(ColumnSpec other)
         {
             if (ReferenceEquals(null, other)) return false;
@@ -229,18 +232,21 @@ namespace pwiz.Common.DataBinding
             Column = that.Column;
             Predicate = that.Predicate;
         }
+
         [Diff]
         public string Column { get; private set; }
         public FilterSpec SetColumn(string column)
         {
             return new FilterSpec(this){Column = column};
         }
+
         public PropertyPath ColumnId { get { return PropertyPath.Parse(Column); } }
         public FilterSpec SetColumnId(PropertyPath columnId)
         {
             return SetColumn(columnId.ToString());
         }
-        [DiffParent]
+
+        [DiffParent(ignoreName:true)]
         public FilterPredicate Predicate { get; private set; }
 
         public FilterSpec SetPredicate(FilterPredicate predicate)
@@ -296,7 +302,6 @@ namespace pwiz.Common.DataBinding
                 return result;
             }
         }
-
     }
 
     /// <summary>
@@ -310,13 +315,12 @@ namespace pwiz.Common.DataBinding
             Columns = ImmutableList.Empty<ColumnSpec>();
             Filters = ImmutableList.Empty<FilterSpec>();
         }
-        [Diff]
+
         public string Name { get; private set; }
         public ViewSpec SetName(string value)
         {
             return ChangeProp(ImClone(this), im=>im.Name = value);
         }
-        [Diff]
         public string RowSource { get; private set; }
 
         public ViewSpec SetRowSource(string value)
@@ -330,20 +334,19 @@ namespace pwiz.Common.DataBinding
         }
 
 
-        [DiffParent]
+        [Diff]
         public ImmutableList<ColumnSpec> Columns { get; private set; }
         public ViewSpec SetColumns(IEnumerable<ColumnSpec> value)
         {
             return ChangeProp(ImClone(this), im => im.Columns = ImmutableList.ValueOf(value));
         }
-        [DiffParent]
+        [Diff]
         public ImmutableList<FilterSpec> Filters { get; private set; }
         public ViewSpec SetFilters(IEnumerable<FilterSpec> value)
         {
             return ChangeProp(ImClone(this), im => im.Filters = ImmutableList.ValueOf(value));
         }
         public string SublistName { get; private set; }
-        [Diff]
         public PropertyPath SublistId
         {
             get { return PropertyPath.Parse(SublistName); }

@@ -28,7 +28,7 @@ using pwiz.Common.SystemUtil;
 
 namespace pwiz.Common.DataBinding.Layout
 {
-    public class RowFilter : Immutable, IRowTransform
+    public class RowFilter : Immutable, IRowTransform, INamedObject
     {
         public static readonly RowFilter Empty = new RowFilter();
         private const string SORT_DESC = "-"; // Not L10N
@@ -418,5 +418,9 @@ namespace pwiz.Common.DataBinding.Layout
             return rowFilter;
         }
         // ReSharper enable NonLocalizedString
+        public string Name
+        {
+            get { return Text; }
+        }
     }
 }

@@ -74,19 +74,11 @@ namespace pwiz.Skyline.Model.DocSettings
             return !string.IsNullOrEmpty(s) ? s : null;
         }
 
-        [Diff]
+        
         public bool IsSemiCleaving { get; private set; }
-
-        [Diff]
         public string CleavageC { get; private set; }
-
-        [Diff]
         public string RestrictC { get; private set; }
-
-        [Diff]
         public string CleavageN { get; private set; }
-
-        [Diff]
         public string RestrictN { get; private set; }
 
         public SequenceTerminus? Type
@@ -517,7 +509,6 @@ namespace pwiz.Skyline.Model.DocSettings
         [Diff]
         public int MaxMissedCleavages { get; private set; }
 
-        [Diff]
         public bool ExcludeRaggedEnds { get; private set; }
 
         #region Implementation of IXmlSerializable

@@ -668,5 +668,11 @@
     <Setting Name="ShowAdvancedVolcanoPlotFormatting" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
+    <Setting Name="LogLevel" Type="System.String" Scope="User">
+      <Value Profile="(Default)">undo_redo</Value>
+    </Setting>
+    <Setting Name="AuditLogging" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

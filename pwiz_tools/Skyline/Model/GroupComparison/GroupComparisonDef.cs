@@ -30,7 +30,7 @@ using pwiz.Skyline.Util;
 namespace pwiz.Skyline.Model.GroupComparison
 {
     [XmlRoot("group_comparison")]
-    public sealed class GroupComparisonDef : XmlNamedElement
+    public sealed class GroupComparisonDef : XmlNamedElement, IAuditLogObject
     {
         public static readonly GroupComparisonDef EMPTY = new GroupComparisonDef
         {
@@ -181,6 +181,9 @@ namespace pwiz.Skyline.Model.GroupComparison
         {
             return ChangeProp(ImClone(this), im => im.ColorRows = ImmutableList.ValueOf(value));
         }
+
+        public string AuditLogText { get { return Name; } }
+        public bool IsName { get { return true; } }
 
         #region XML serialization
 

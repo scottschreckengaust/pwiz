@@ -2926,7 +2926,7 @@
     <value>191, 22</value>
   </data>
   <data name="auditLogMenuItem.Text" xml:space="preserve">
-    <value>Audit &amp;Log</value>
+    <value>Au&amp;dit Log</value>
   </data>
   <data name="toolStripSeparator36.Size" type="System.Drawing.Size, System.Drawing">
     <value>188, 6</value>

@@ -131,13 +131,10 @@ namespace pwiz.Common.DataBinding
             {
                 var item = GetItemFromKey(collection, key);
                 if (item == null)
-                {
                     return null;
-                }
-                else
-                {
-                    return ((KeyValuePair<TKey, TValue>) item).Value;
-                }
+
+                return ((KeyValuePair<TKey, TValue>)item).Value;
+
             }
 
             public IEnumerable GetKeys(object collection)

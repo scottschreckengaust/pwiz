@@ -39,7 +39,7 @@ namespace pwiz.Skyline.Model.DocSettings
     /// always also allow the "null" value which is not in the item list.
     /// </summary>
     [XmlRoot("annotation")]    
-    public sealed class AnnotationDef : XmlNamedElement
+    public sealed class AnnotationDef : XmlNamedElement, IAuditLogObject
     {
         /// <summary>
         /// A prefix that is often prepended to annotation names when annotations coexist 
@@ -375,5 +375,8 @@ namespace pwiz.Skyline.Model.DocSettings
             }
             return result.ToString();
         }
+
+        public string AuditLogText { get { return Name; } }
+        public bool IsName { get { return true; } }
     }
 }

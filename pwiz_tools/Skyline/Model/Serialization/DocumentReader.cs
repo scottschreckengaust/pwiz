@@ -28,6 +28,7 @@ using pwiz.Common.Collections;
 using pwiz.Common.SystemUtil;
 using pwiz.ProteomeDatabase.API;
 using pwiz.ProteowizardWrapper;
+using pwiz.Skyline.Model.AuditLog;
 using pwiz.Skyline.Model.DocSettings;
 using pwiz.Skyline.Model.GroupComparison;
 using pwiz.Skyline.Model.Lib;
@@ -42,8 +43,8 @@ namespace pwiz.Skyline.Model.Serialization
     {
         private readonly StringPool _stringPool = new StringPool();
         public DocumentFormat FormatVersion { get; private set; }
-        public List<AuditLogRow> AuditLog { get; private set; }
         public PeptideGroupDocNode[] Children { get; private set; }
+        public List<AuditLogEntry> AuditLog { get; private set; }
 
         private readonly Dictionary<string, string> _uniqueSpecies = new Dictionary<string, string>();
 
@@ -528,19 +529,9 @@ namespace pwiz.Skyline.Model.Serialization
             }
 
             reader.ReadStartElement();  // Start document element
-
-            AuditLog = new List<AuditLogRow>();
-            if (reader.IsStartElement(EL.audit_log))
-            {
-                reader.ReadStartElement();
-                while (reader.IsStartElement(EL.audit_log_entry))
-                {
-                    AuditLog.Add(AuditLogRow.Deserialize(reader));
-                }
-                reader.ReadEndElement();
-            }
-
             Settings = reader.DeserializeElement<SrmSettings>() ?? SrmSettingsList.GetDefault();
+
+            AuditLog = new List<AuditLogEntry>();
 
             if (reader.IsStartElement())
             {
@@ -553,6 +544,16 @@ namespace pwiz.Skyline.Model.Serialization
                 {
                     reader.ReadStartElement();
                     Children = ReadPeptideGroupListXml(reader);
+                    reader.ReadEndElement();
+                }
+
+                if (reader.IsStartElement(EL.audit_log))
+                {
+                    reader.ReadStartElement(EL.audit_log);
+                    while (reader.IsStartElement(AuditLogEntry.XML_ROOT))
+                    {
+                        AuditLog.Add(reader.DeserializeElement<AuditLogEntry>());
+                    }
                     reader.ReadEndElement();
                 }
             }

@@ -291,6 +291,25 @@
     <Compile Include="AlgLib\solvers.cs" />
     <Compile Include="AlgLib\specialfunctions.cs" />
     <Compile Include="AlgLib\statistics.cs" />
+    <Compile Include="Model\AuditLog\AuditLogStrings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>AuditLogStrings.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Model\AuditLog\CustomPropertyLocalizer.cs" />
+    <Compile Include="Model\AuditLog\LogMessage.cs" />
+    <Compile Include="Model\AuditLog\Property.cs" />
+    <Compile Include="Model\AuditLog\PropertyElementNames.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PropertyElementNames.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Model\AuditLog\PropertyNames.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PropertyNames.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Model\AuditLog\Reflector.cs" />
     <Compile Include="Model\Databinding\Entities\ColumnCaptions.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -307,9 +326,9 @@
     <Compile Include="Controls\AuditLog\AuditLogForm.Designer.cs">
       <DependentUpon>AuditLogForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Model\DocSettings\AuditLogRow.cs" />
-    <Compile Include="Model\DocSettings\PropertyDiff.cs" />
-    <Compile Include="Model\DocSettings\Reflector.cs" />
+    <Compile Include="Model\AuditLog\AuditLogEntry.cs" />
+    <Compile Include="Model\AuditLog\DiffNode.cs" />
+    <Compile Include="Model\AuditLog\PropertyName.cs" />
     <Compile Include="Model\Lib\BlibData\DbRefSpectraPeakAnnotations.cs" />
     <Compile Include="Model\Lib\LibKeyIndex.cs" />
     <Compile Include="Model\Lib\ViewLibraryPepInfoList.cs" />
@@ -2100,6 +2119,20 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FileUI\ChooseIrtStandardPeptidesDlg.resx">
       <DependentUpon>ChooseIrtStandardPeptidesDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Model\AuditLog\AuditLogStrings.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>AuditLogStrings.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Model\AuditLog\PropertyElementNames.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>PropertyElementNames.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Model\AuditLog\PropertyNames.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>PropertyNames.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Model\Databinding\Entities\ColumnCaptions.ja.resx">
       <DependentUpon>ColumnCaptions.resx</DependentUpon>

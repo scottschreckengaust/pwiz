@@ -35,8 +35,6 @@ using System.Xml.Serialization;
 using DigitalRune.Windows.Docking;
 using log4net;
 using pwiz.Common.Collections;
-using pwiz.Common.DataBinding;
-using pwiz.Common.DataBinding.Controls;
 using pwiz.Common.SystemUtil;
 using pwiz.ProteomeDatabase.Util;
 using pwiz.Skyline.Alerts;
@@ -61,9 +59,7 @@ using pwiz.Skyline.Model.RetentionTimes;
 using pwiz.Skyline.Model.Tools;
 using pwiz.Skyline.Properties;
 using pwiz.Skyline.Controls;
-using pwiz.Skyline.Controls.AuditLog;
-using pwiz.Skyline.Model.Databinding;
-using pwiz.Skyline.Model.Databinding.Collections;
+using pwiz.Skyline.Model.AuditLog;
 using pwiz.Skyline.Model.GroupComparison;
 using pwiz.Skyline.SettingsUI;
 using pwiz.Skyline.SettingsUI.Irt;
@@ -634,15 +630,30 @@ namespace pwiz.Skyline
             ModifyDocument(description, null, act, null, null);
         }
 
-        public void ModifyDocument(string description, IUndoState undoState, Func<SrmDocument, SrmDocument> act, Action onModifying, Action onModified)
+        public void ModifyDocument(string description, Func<SrmDocument, SrmDocument> act, Func<SrmDocument, SrmDocument, AuditLogEntry> logFunc)
+        {
+            ModifyDocument(description, null, act, null, null, logFunc);
+        }
+
+        public static AuditLogEntry SettingsLogFunction(SrmDocument oldDoc, SrmDocument newDoc)
+        {
+            var tree = Reflector<SrmDocument>.BuildDiffTree(Property.ROOT_PROPERTY, oldDoc, newDoc, DateTime.Now); // Not L10N
+            return tree != null && tree.Root != null ? new AuditLogEntry(Program.MainWindow, oldDoc.FormatVersion, tree) : null;
+        }
+
+        public void ModifyDocument(string description, IUndoState undoState, Func<SrmDocument, SrmDocument> act, Action onModifying, Action onModified, Func<SrmDocument, SrmDocument, AuditLogEntry> logFunc = null)
         {
             try
             {
-                using (var undo = BeginUndo(description, undoState))
+                using (var undo = BeginUndo(undoState))
                 {
-                    if (ModifyDocumentInner(act, onModifying, onModified))
+                    AuditLogEntry entry;
+                    if (ModifyDocumentInner(act, onModifying, onModified, logFunc, out entry))
                     {
-                        undo.Commit();
+                        undo.Commit(entry != null ? entry.UndoRedoRow.Text : description);
+
+                        if (entry != null && Settings.Default.AuditLogging)
+                            ModifyDocumentNoUndo(d => d.ChangeAuditLog(ImmutableList<AuditLogEntry>.ValueOf(Document.AuditLog.Concat(new[] { entry }))));
                     }   
                 }
             }
@@ -665,7 +676,13 @@ namespace pwiz.Skyline
             ModifyDocumentInner(act, null, null);
         }
 
-        private bool ModifyDocumentInner(Func<SrmDocument, SrmDocument> act, Action onModifying, Action onModified)
+        private void ModifyDocumentInner(Func<SrmDocument, SrmDocument> act, Action onModifying, Action onModified)
+        {
+            AuditLogEntry unused;
+            ModifyDocumentInner(act, onModifying, onModified, null, out unused);
+        }
+
+        private bool ModifyDocumentInner(Func<SrmDocument, SrmDocument> act, Action onModifying, Action onModified, Func<SrmDocument, SrmDocument, AuditLogEntry> logFunc, out AuditLogEntry resultEntry)
         {
             SrmDocument docOriginal;
             SrmDocument docNew;
@@ -678,18 +695,13 @@ namespace pwiz.Skyline
                 docOriginal = Document;
                 docNew = act(docOriginal);
 
+                resultEntry = logFunc != null ? logFunc(docOriginal, docNew) : null;
+
                 // If no change has been made, return without committing a
                 // new undo record to the undo stack.
                 if (ReferenceEquals(docOriginal, docNew))
                     return false;
 
-                var diffs = Reflector<SrmSettings>.CreateDiff(docOriginal.Settings, docNew.Settings);
-                if (diffs.Any())
-                {
-                    var newDoc = docNew;
-                    diffs.SelectMany(d => d.CreateRows()).ForEach(r => newDoc.WriteAuditLog(r));
-                }
-                
                 // And mark the document as changed by the user.
                 docNew = docNew.IncrementUserRevisionIndex();
 
@@ -750,9 +762,9 @@ namespace pwiz.Skyline
             }
         }
 
-        public IUndoTransaction BeginUndo(string description, IUndoState undoState = null)
+        public IUndoTransaction BeginUndo(IUndoState undoState = null)
         {
-            return _undoManager.BeginTransaction(description, undoState);
+            return _undoManager.BeginTransaction(undoState);
         }
 
         public bool InUndoRedo { get { return _undoManager.InUndoRedo; } }
@@ -2728,7 +2740,7 @@ namespace pwiz.Skyline
                         doc => doc.ChangeSettings(
                             doc.Settings.ChangeDataSettings(
                                 doc.Settings.DataSettings.AddGroupComparisonDef(
-                                editDlg.GroupComparisonDef))));
+                                editDlg.GroupComparisonDef))), SettingsLogFunction);
                 }
             }
         }
@@ -2739,7 +2751,7 @@ namespace pwiz.Skyline
                         doc => doc.ChangeSettings(
                             doc.Settings.ChangeDataSettings(
                                 doc.Settings.DataSettings.ChangePanoramaPublishUri(
-                                uri))));
+                                uri))), SettingsLogFunction);
         }
 
         private void editGroupComparisonListMenuItem_Click(object sender, EventArgs e)
@@ -3261,7 +3273,7 @@ namespace pwiz.Skyline
                                                     {
                                                         settingsNew = (SrmSettings) doc.Settings.ChangeName(ss.SaveName);
                                                         return doc.ChangeSettings(settingsNew);
-                                                    });
+                                                    }, SettingsLogFunction);
 
                 if (settingsNew != null)
                     Settings.Default.SrmSettingsList.Add(settingsNew.MakeSavable(ss.SaveName));
@@ -3418,7 +3430,7 @@ namespace pwiz.Skyline
             }
 
             ModifyDocument(message ?? Resources.SkylineWindow_ChangeSettings_Change_settings, undoState,
-                doc => doc.ChangeSettings(newSettings, monitor), onModifyingAction, onModifiedAction);
+                doc => doc.ChangeSettings(newSettings, monitor), onModifyingAction, onModifiedAction, SettingsLogFunction);
             return true;
         }
 
@@ -3442,7 +3454,7 @@ namespace pwiz.Skyline
                     ModifyDocument(Resources.SkylineWindow_ShowDocumentSettingsDialog_Change_document_settings,
                         doc => doc.ChangeSettings(
                             doc.Settings.ChangeDataSettings(
-                                dlg.GetDataSettings(doc.Settings.DataSettings))));
+                                dlg.GetDataSettings(doc.Settings.DataSettings))), SettingsLogFunction);
                 }
             }
         }
@@ -3462,7 +3474,7 @@ namespace pwiz.Skyline
             if (integrateAll != DocumentUI.Settings.TransitionSettings.Integration.IsIntegrateAll)
             {
                 ModifyDocument(integrateAll ? Resources.SkylineWindow_IntegrateAll_Set_integrate_all : Resources.SkylineWindow_IntegrateAll_Clear_integrate_all,
-                    doc => doc.ChangeSettings(doc.Settings.ChangeTransitionIntegration(i => i.ChangeIntegrateAll(integrateAll))));
+                    doc => doc.ChangeSettings(doc.Settings.ChangeTransitionIntegration(i => i.ChangeIntegrateAll(integrateAll))), SettingsLogFunction);
             }
         }
 
@@ -5053,17 +5065,5 @@ namespace pwiz.Skyline
                 collapsePeptidesMenuItem.Text = Resources.SkylineWindow_expandAllMenuItem_DropDownOpening__Molecules;
             }
         }
-
-        public void ShowAuditLog()
-        {
-            var form = AuditLogForm.MakeAuditLogForm(this);
-            form.Show(dockPanel);
-        }
-
-        private void auditLogMenuItem_Click(object sender, EventArgs e)
-        {
-            ShowAuditLog();
-        }
     }
 }
-

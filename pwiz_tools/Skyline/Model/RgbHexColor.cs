@@ -21,6 +21,7 @@ using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Runtime.CompilerServices;
+using pwiz.Common.DataBinding;
 using pwiz.Skyline.Model.DocSettings;
 
 namespace pwiz.Skyline.Model
@@ -53,6 +54,7 @@ namespace pwiz.Skyline.Model
             set { _color = value; NotifyPropertyChanged(); }
         }
 
+        [Diff]
         public string Rgb
         {
             get

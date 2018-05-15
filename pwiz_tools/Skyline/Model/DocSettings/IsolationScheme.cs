@@ -24,6 +24,7 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Serialization;
 using pwiz.Common.Collections;
+using pwiz.Common.DataBinding;
 using pwiz.Common.SystemUtil;
 using pwiz.Skyline.Properties;
 using pwiz.Skyline.Util;
@@ -31,7 +32,7 @@ using pwiz.Skyline.Util;
 namespace pwiz.Skyline.Model.DocSettings
 {
     [XmlRoot("isolation_scheme")]
-    public sealed class IsolationScheme : XmlNamedElement, IValidating
+    public sealed class IsolationScheme : XmlNamedElement, IValidating, IAuditLogObject
     {
         public const int MIN_MULTIPLEXED_ISOLATION_WINDOWS = 2;
         public const int MAX_MULTIPLEXED_ISOLATION_WINDOWS = 100;
@@ -67,9 +68,32 @@ namespace pwiz.Skyline.Model.DocSettings
             }
         };
 
+        [Diff]
         public double? PrecursorFilter { get; private set; }
         public double? PrecursorRightFilter { get; private set; }
         public bool UseMargin { get; private set; }
+
+        public enum IsolationWidthType
+        {
+            _fixed,
+            results,
+            results_with_margin
+        }
+
+        [Diff]
+        public IsolationWidthType IsolationWidth
+        {
+            get
+            {
+                if (UseMargin)
+                    return IsolationWidthType.results_with_margin;
+                else if (PrecursorFilter.HasValue)
+                    return IsolationWidthType._fixed;
+                else
+                    return IsolationWidthType.results;
+            }
+        }
+
         private ImmutableList<IsolationWindow> _prespecifiedIsolationWindows;
 
         /// <summary>
@@ -78,7 +102,9 @@ namespace pwiz.Skyline.Model.DocSettings
         /// </summary>
         private ImmutableList<IsolationWindow> _prespecifiedDisjointWindows;
 
+        [Diff]
         public string SpecialHandling { get; private set; }
+        [Diff]
         public int? WindowsPerScan { get; private set; }
 
         public IsolationScheme(string name, string specialHandling, double? precursorFilter, double? precursorRightFilter = null, bool useMargin = false)
@@ -141,6 +167,7 @@ namespace pwiz.Skyline.Model.DocSettings
             get { return SpecialHandlingType.IsAllIons(SpecialHandling); }
         }
 
+        [DiffParent]
         public IList<IsolationWindow> PrespecifiedIsolationWindows
         {
             get { return _prespecifiedIsolationWindows; }
@@ -223,6 +250,9 @@ namespace pwiz.Skyline.Model.DocSettings
                     yield return window;
             }
         }
+
+        public string AuditLogText { get { return Name; } }
+        public bool IsName { get { return true; } }
 
         #region Implementation of IXmlSerializable
 

@@ -2661,5 +2661,29 @@ namespace pwiz.Skyline.Properties {
                 this["ShowAdvancedVolcanoPlotFormatting"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("undo_redo")]
+        public string LogLevel {
+            get {
+                return ((string)(this["LogLevel"]));
+            }
+            set {
+                this["LogLevel"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool AuditLogging {
+            get {
+                return ((bool)(this["AuditLogging"]));
+            }
+            set {
+                this["AuditLogging"] = value;
+            }
+        }
     }
 }
