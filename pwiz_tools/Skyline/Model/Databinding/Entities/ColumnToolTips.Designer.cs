@@ -531,6 +531,15 @@ namespace pwiz.Skyline.Model.Databinding.Entities {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Document version at the time the change was made.
+        /// </summary>
+        public static string DocumentFormat {
+            get {
+                return ResourceManager.GetString("DocumentFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ion mobility drift time (in milliseconds) for fragment ions, which typically move faster due to more energetic collisions. (For backward compatibility only: IonMobilityFragment and IonMobilityUnits are the preferred terms.).
         /// </summary>
         public static string DriftTimeFragment {
@@ -2291,6 +2300,15 @@ namespace pwiz.Skyline.Model.Databinding.Entities {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Reason for the change.
+        /// </summary>
+        public static string Reason {
+            get {
+                return ResourceManager.GetString("Reason", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Replicate.
         /// </summary>
         public static string Replicate {
@@ -2413,6 +2431,15 @@ namespace pwiz.Skyline.Model.Databinding.Entities {
         public static string SampleType {
             get {
                 return ResourceManager.GetString("SampleType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Version of skyline in which change was made.
+        /// </summary>
+        public static string SkylineVersion {
+            get {
+                return ResourceManager.GetString("SkylineVersion", resourceCulture);
             }
         }
         
@@ -2572,6 +2599,15 @@ namespace pwiz.Skyline.Model.Databinding.Entities {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Description of the change.
+        /// </summary>
+        public static string Text {
+            get {
+                return ResourceManager.GetString("Text", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The modified sequence where modifications are referred to by their three letter codes, e.g. &quot;C[CAM]&quot;. If the modification does not have a three letter code, then its full name is used instead..
         /// </summary>
         public static string ThreeLetterCodes {
@@ -2595,6 +2631,15 @@ namespace pwiz.Skyline.Model.Databinding.Entities {
         public static string Times {
             get {
                 return ResourceManager.GetString("Times", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Time at which this change was made.
+        /// </summary>
+        public static string TimeStamp {
+            get {
+                return ResourceManager.GetString("TimeStamp", resourceCulture);
             }
         }
         
@@ -2784,6 +2829,15 @@ namespace pwiz.Skyline.Model.Databinding.Entities {
         public static string UnimodIds {
             get {
                 return ResourceManager.GetString("UnimodIds", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User who made the change.
+        /// </summary>
+        public static string User {
+            get {
+                return ResourceManager.GetString("User", resourceCulture);
             }
         }
         

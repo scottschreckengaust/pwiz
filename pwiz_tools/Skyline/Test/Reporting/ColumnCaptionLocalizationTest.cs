@@ -65,7 +65,7 @@ namespace pwiz.SkylineTest.Reporting
         /// </summary>
         [TestMethod]
         public void TestAllColumnCaptionsAreLocalized()
-        {
+          {
             var documentContainer = new MemoryDocumentContainer();
             Assert.IsTrue(documentContainer.SetDocument(new SrmDocument(SrmSettingsList.GetDefault()), documentContainer.Document));
             SkylineDataSchema skylineDataSchema = new SkylineDataSchema(documentContainer, SkylineDataSchema.GetLocalizedSchemaLocalizer());

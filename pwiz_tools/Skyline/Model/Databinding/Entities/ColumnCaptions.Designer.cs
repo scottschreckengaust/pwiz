@@ -511,7 +511,7 @@ namespace pwiz.Skyline.Model.Databinding.Entities {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Document Format.
+        ///   Looks up a localized string similar to Document version.
         /// </summary>
         public static string DocumentFormat {
             get {
