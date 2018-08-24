@@ -78,7 +78,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseCommand.cs" />
-    <Compile Include="DsvWriter.cs" />
     <Compile Include="GetReportCommand.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
