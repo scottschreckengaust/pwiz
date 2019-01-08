@@ -64,6 +64,10 @@ matrix:
 #      env:
 #        - MATRIX_EVAL="brew install gcc && TOOLSET=toolset=gcc-7"
 
+    - os: windows
+#      env:
+#        - MATRIX_EVAL="TOOLSET=toolset="
+        
 before_install:
     - eval "${MATRIX_EVAL}"
 
